@@ -1,3 +1,9 @@
+# 1.4.2
+
+**REFACTOR**
+
+- Modal/Drawer中使用VxeTable tooltip需要设置更高的z-index 防止被遮挡
+
 # 1.4.1
 
 **FEATURES**

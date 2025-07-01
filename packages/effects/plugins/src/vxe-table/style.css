@@ -123,3 +123,9 @@ html[data-vxe-ui-theme='dark'] .vxe-grid {
 .vxe-grid--layout-body-content-wrapper {
   overflow: hidden;
 }
+
+/* modal/drawer中使用 tooltip需要设置更高的z-index 防止被遮挡 */
+body:has(div[data-dismissable-layer]) .vxe-tooltip--wrapper {
+  /* tooltip直接在style中设置 需要!important来实现优先级覆盖 */
+  z-index: calc(var(--popup-z-index) + 1) !important;
+}
