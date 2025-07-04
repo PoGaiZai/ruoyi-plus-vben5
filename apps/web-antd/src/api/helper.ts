@@ -1,3 +1,9 @@
+import { $t } from '@vben/locales';
+
+import { message } from 'ant-design-vue';
+
+import { useAuthStore } from '#/store';
+
 import { requestClient } from './request';
 
 /**
@@ -25,4 +31,36 @@ export function commonExport(url: string, data: Record<string, any>) {
     isTransformResponse: false,
     responseType: 'blob',
   });
+}
+
+/**
+ * 定义一个401专用异常 用于可能会用到的区分场景?
+ */
+export class UnauthorizedException extends Error {}
+
+/**
+ * 是否已经处在登出过程中了 一个标志位
+ * 主要是防止一个页面会请求多个api 都401 会导致登出执行多次
+ */
+let isLogoutProcessing = false;
+
+/**
+ * 登出逻辑 两个地方用到 提取出来
+ * @throws UnauthorizedException 抛出特定的异常
+ */
+export function handleUnauthorizedLogout() {
+  const timeoutMsg = $t('http.loginTimeout');
+
+  // 已经在登出过程中 不再执行
+  if (isLogoutProcessing) {
+    throw new UnauthorizedException(timeoutMsg);
+  }
+  isLogoutProcessing = true;
+  const userStore = useAuthStore();
+  userStore.logout().finally(() => {
+    message.error(timeoutMsg);
+    isLogoutProcessing = false;
+  });
+  // 不再执行下面逻辑
+  throw new UnauthorizedException(timeoutMsg);
 }

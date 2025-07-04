@@ -4,6 +4,7 @@
 
 import type { HttpResponse } from '@vben/request';
 
+import { BUSINESS_SUCCESS_CODE, UNAUTHORIZED_CODE } from '@vben/constants';
 import { useAppConfig } from '@vben/hooks';
 import { $t } from '@vben/locales';
 import { preferences } from '@vben/preferences';
@@ -28,21 +29,12 @@ import {
 } from '#/utils/encryption/crypto';
 import * as encryptUtil from '#/utils/encryption/jsencrypt';
 
+import { handleUnauthorizedLogout } from './helper';
+
 const { apiURL, clientId, enableEncrypt } = useAppConfig(
   import.meta.env,
   import.meta.env.PROD,
 );
-
-/**
- * 是否已经处在登出过程中了 一个标志位
- * 主要是防止一个页面会请求多个api 都401 会导致登出执行多次
- */
-let isLogoutProcessing = false;
-
-/**
- * 定义一个401专用异常 用于可能会用到的区分场景?
- */
-export class UnauthorizedException extends Error {}
 
 function createRequestClient(baseURL: string) {
   const client = new RequestClient({
@@ -173,21 +165,38 @@ function createRequestClient(baseURL: string) {
       // 不进行任何处理，直接返回
       // 用于页面代码可能需要直接获取code，data，message这些信息时开启
       if (!isTransformResponse) {
-        /**
-         * 需要判断下载二进制的情况 正常是返回二进制 报错会返回json
-         * 当type为blob且content-type为application/json时 则判断已经下载出错
-         */
-        if (
-          response.config.responseType === 'blob' &&
-          response.headers['content-type']?.includes?.('application/json')
-        ) {
-          // 这时候的data为blob类型
-          const blob = response.data as unknown as Blob;
-          // 拿到字符串转json对象
-          response.data = JSON.parse(await blob.text());
-          // 然后按正常逻辑执行下面的代码(判断业务状态码)
+        // json数据的判断
+        if (response.headers['content-type']?.includes?.('application/json')) {
+          /**
+           * 需要判断是否登录超时/401
+           * 执行登出操作
+           */
+          const resp = response.data as unknown as HttpResponse;
+          // 抛出异常 不再执行
+          if (
+            typeof resp === 'object' &&
+            Reflect.has(resp, 'code') &&
+            resp.code === UNAUTHORIZED_CODE
+          ) {
+            handleUnauthorizedLogout();
+          }
+
+          /**
+           * 需要判断下载二进制的情况 正常是返回二进制 报错会返回json
+           * 当type为blob且content-type为application/json时 则判断已经下载出错
+           */
+          if (response.config.responseType === 'blob') {
+            // 这时候的data为blob类型
+            const blob = response.data as unknown as Blob;
+            // 拿到字符串转json对象
+            response.data = JSON.parse(await blob.text());
+            // 然后按正常逻辑执行下面的代码(判断业务状态码)
+          } else {
+            // 其他类型数据 直接返回
+            return response.data;
+          }
         } else {
-          // 其他情况 直接返回
+          // 非json数据 直接返回 不做校验
           return response.data;
         }
       }
@@ -200,8 +209,10 @@ function createRequestClient(baseURL: string) {
       // 后端并没有采用严格的{code, msg, data}模式
       const { code, data, msg, ...other } = axiosResponseData;
 
-      // 业务状态码为200则请求成功
-      const hasSuccess = Reflect.has(axiosResponseData, 'code') && code === 200;
+      // 业务状态码为200 则请求成功
+      const hasSuccess =
+        Reflect.has(axiosResponseData, 'code') &&
+        code === BUSINESS_SUCCESS_CODE;
       if (hasSuccess) {
         let successMsg = msg;
 
@@ -230,20 +241,10 @@ function createRequestClient(baseURL: string) {
       // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
       let timeoutMsg = '';
       switch (code) {
-        case 401: {
-          // 已经在登出过程中 不再执行
-          if (isLogoutProcessing) {
-            throw new UnauthorizedException(timeoutMsg);
-          }
-          isLogoutProcessing = true;
-          const _msg = $t('http.loginTimeout');
-          const userStore = useAuthStore();
-          userStore.logout().finally(() => {
-            message.error(_msg);
-            isLogoutProcessing = false;
-          });
-          // 不再执行下面逻辑
-          throw new UnauthorizedException(_msg);
+        // 登录超时
+        case UNAUTHORIZED_CODE: {
+          handleUnauthorizedLogout();
+          break;
         }
         default: {
           if (msg) {
