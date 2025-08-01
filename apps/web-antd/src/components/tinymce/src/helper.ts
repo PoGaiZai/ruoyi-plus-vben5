@@ -25,6 +25,10 @@ export async function contentWithOssIdTransform(content: string) {
   const ossIds = [...imgDom].map(
     (img) => (img as HTMLImageElement).dataset.ossId ?? '',
   );
+  // 兼容之前的代码 可能并没有储存ossId
+  if (ossIds.length === 0) {
+    return content;
+  }
   const ossFileList = await ossInfo(ossIds);
 
   imgDom.forEach((item) => {
