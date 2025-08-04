@@ -21,7 +21,7 @@ const params = {
   Authorization: `Bearer ${accessStore.accessToken}`,
   id: definitionId,
   clientid: clientId,
-  disabled,
+  onlyDesignShow: disabled,
 };
 
 /**
