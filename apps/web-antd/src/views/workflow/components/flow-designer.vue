@@ -6,7 +6,6 @@ import { stringify } from '@vben/request';
 import { useAccessStore } from '@vben/stores';
 
 import { useEventListener } from '@vueuse/core';
-import { Alert } from 'ant-design-vue';
 
 defineOptions({ name: 'FlowDesigner' });
 
@@ -50,12 +49,6 @@ useEventListener('message', messageHandler);
 
 <template>
   <div class="size-full">
-    <Alert
-      class="mx-4 my-2"
-      type="warning"
-      :show-icon="true"
-      message="这是iframe页面! iframe页面! iframe页面! 不是我写的真服了"
-    />
     <iframe :src="url" class="size-full"></iframe>
   </div>
 </template>
