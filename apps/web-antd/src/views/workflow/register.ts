@@ -11,11 +11,11 @@ const LeaveDescription = defineAsyncComponent(
 /**
  * key为流程的路径(task.formPath) value为要显示的组件
  */
-export const flowDescripionsMap = {
+export const flowComponentsMap = {
   /**
    * 请假申请 详情
    */
   '/workflow/leaveEdit/index': markRaw(LeaveDescription),
 };
 
-export type DescripionsMapKey = keyof typeof flowDescripionsMap;
+export type FlowComponentsMapMapKey = keyof typeof flowComponentsMap;
