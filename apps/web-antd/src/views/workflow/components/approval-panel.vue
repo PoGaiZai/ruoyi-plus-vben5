@@ -4,14 +4,25 @@ import type { User } from '#/api/core/user';
 import type { FlowInfoResponse } from '#/api/workflow/instance/model';
 import type { TaskInfo } from '#/api/workflow/task/model';
 
-import { computed, onUnmounted, ref, watch } from 'vue';
+import { computed, h, onUnmounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Fallback, useVbenModal, VbenAvatar } from '@vben/common-ui';
 import { DictEnum } from '@vben/constants';
 import { getPopupContainer } from '@vben/utils';
 
-import { CopyOutlined } from '@ant-design/icons-vue';
+import {
+  ArrowLeftOutlined,
+  CheckOutlined,
+  CopyOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
+  MenuOutlined,
+  RollbackOutlined,
+  UsergroupAddOutlined,
+  UsergroupDeleteOutlined,
+  UserOutlined,
+} from '@ant-design/icons-vue';
 import { useClipboard, useEventListener } from '@vueuse/core';
 import {
   Card,
@@ -457,29 +468,48 @@ async function handleCopy(text: string) {
           <a-button
             v-if="revocable"
             danger
+            ghost
             type="primary"
+            :icon="h(RollbackOutlined)"
             @click="handleCancel"
           >
             撤销申请
           </a-button>
-          <a-button v-if="editableAndRemoveable" @click="handleEdit">
+          <a-button
+            type="primary"
+            ghost
+            v-if="editableAndRemoveable"
+            :icon="h(EditOutlined)"
+            @click="handleEdit"
+          >
             重新编辑
           </a-button>
           <a-button
             v-if="editableAndRemoveable"
             danger
+            ghost
             type="primary"
+            :icon="h(EditOutlined)"
             @click="handleRemove"
           >
             删除
           </a-button>
         </Space>
         <Space v-if="type === 'approve'">
-          <a-button type="primary" @click="handleApproval">通过</a-button>
+          <a-button
+            type="primary"
+            ghost
+            :icon="h(CheckOutlined)"
+            @click="handleApproval"
+          >
+            通过
+          </a-button>
           <a-button
             v-if="buttonPermissions?.termination"
             danger
+            ghost
             type="primary"
+            :icon="h(ExclamationCircleOutlined)"
             @click="handleTermination"
           >
             终止
@@ -487,7 +517,9 @@ async function handleCopy(text: string) {
           <a-button
             v-if="buttonPermissions?.back"
             danger
+            ghost
             type="primary"
+            :icon="h(ArrowLeftOutlined)"
             @click="handleRejection"
           >
             驳回
@@ -503,32 +535,34 @@ async function handleCopy(text: string) {
                   key="1"
                   @click="() => delegationModalApi.open()"
                 >
-                  委托
+                  <UserOutlined class="mr-2" />委托
                 </MenuItem>
                 <MenuItem
                   v-if="buttonPermissions?.transfer"
                   key="2"
                   @click="() => transferModalApi.open()"
                 >
-                  转办
+                  <RollbackOutlined class="mr-2" /> 转办
                 </MenuItem>
                 <MenuItem
                   v-if="showMultiActions && buttonPermissions?.addSign"
                   key="3"
                   @click="() => addSignatureModalApi.open()"
                 >
-                  加签
+                  <UsergroupAddOutlined class="mr-2" /> 加签
                 </MenuItem>
                 <MenuItem
                   v-if="showMultiActions && buttonPermissions?.subSign"
                   key="4"
                   @click="() => reductionSignatureModalApi.open()"
                 >
-                  减签
+                  <UsergroupDeleteOutlined class="mr-2" /> 减签
                 </MenuItem>
               </Menu>
             </template>
-            <a-button v-if="showButtonOther"> 其他 </a-button>
+            <a-button v-if="showButtonOther" :icon="h(MenuOutlined)">
+              其他
+            </a-button>
           </Dropdown>
           <ApprovalModal @complete="$emit('reload')" />
           <RejectionModal @complete="$emit('reload')" />
