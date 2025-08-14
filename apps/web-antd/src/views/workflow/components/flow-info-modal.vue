@@ -20,6 +20,9 @@ const [BasicModal, modalApi] = useVbenModal({
   title: '流程信息',
   class: 'w-[1000px]',
   footer: false,
+  onClosed: () => {
+    taskInfo.value = undefined;
+  },
   onOpenChange: async (isOpen) => {
     if (!isOpen) {
       return null;
