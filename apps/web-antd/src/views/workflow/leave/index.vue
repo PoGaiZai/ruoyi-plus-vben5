@@ -182,13 +182,14 @@ function handleInfo(row: Required<LeaveForm>) {
           :get-popup-container="getVxePopupContainer"
           placement="left"
           title="确认撤销？"
+          :disabled="!['waiting'].includes(row.status)"
           @confirm.stop="handleRevoke(row)"
           @cancel.stop=""
         >
           <a-button
             size="small"
             type="link"
-            :disbaled="!['waiting'].includes(row.status)"
+            :disabled="!['waiting'].includes(row.status)"
             v-access:code="['workflow:leave:edit']"
             @click.stop=""
           >
