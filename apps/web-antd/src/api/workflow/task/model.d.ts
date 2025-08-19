@@ -17,6 +17,10 @@ export interface TaskInfo {
   businessId: string;
   nodeCode: string;
   nodeName: string;
+  /**
+   * >5.5.0版本才有自定义标题
+   */
+  businessTitle?: string;
   nodeType: number;
   permissionList?: any;
   userList?: any;

@@ -417,7 +417,9 @@ async function handleCopy(text: string) {
       <div class="flex flex-col gap-5 p-4">
         <div class="flex flex-col gap-3">
           <div class="flex items-center gap-2">
-            <div class="text-2xl font-bold">{{ task.flowName }}</div>
+            <div class="text-2xl font-bold">
+              {{ task.businessTitle ?? task.flowName }}
+            </div>
             <div>
               <component
                 :is="renderDict(task.flowStatus, DictEnum.WF_BUSINESS_STATUS)"

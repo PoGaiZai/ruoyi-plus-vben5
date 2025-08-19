@@ -138,7 +138,7 @@ async function handleStartWorkFlow() {
           flowCode,
           variables: taskVariables,
           flowInstanceBizExtBo: {
-            businessTitle: '请假申请 - 自定义业务标题',
+            businessTitle: '请假申请 - 自定义标题',
             businessCode: leaveResp!.applyCode,
           },
         };
