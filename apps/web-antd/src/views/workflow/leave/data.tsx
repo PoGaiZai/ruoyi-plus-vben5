@@ -10,12 +10,12 @@ import { OptionsTag } from '#/components/table';
 import { renderDict } from '#/utils/render';
 
 export const leaveTypeOptions = [
-  { label: '病假 😷', value: '1' },
-  { label: '事假 🖥', value: '2' },
-  { label: '年假 🏝', value: '3' },
-  { label: '婚假 💒', value: '4' },
-  { label: '产假 🤰', value: '5' },
-  { label: '其他 🤔', value: '7' },
+  { label: '病假', value: '1' },
+  { label: '事假', value: '2' },
+  { label: '年假', value: '3' },
+  { label: '婚假', value: '4' },
+  { label: '产假', value: '5' },
+  { label: '其他', value: '7' },
 ];
 
 export const leaveFlowOptions = [
@@ -96,7 +96,7 @@ export const columns: VxeGridProps['columns'] = [
   },
 ];
 
-export const formSchema: () => VbenFormSchema[] = () => [
+export const modalSchema: () => VbenFormSchema[] = () => [
   {
     label: '主键',
     fieldName: 'id',
@@ -129,17 +129,21 @@ export const formSchema: () => VbenFormSchema[] = () => [
     componentProps: {
       options: [
         {
-          label: '前端发起 (可选审批人, 选抄送人, 上传附件)',
+          label: '前端发起(可选审批人, 选抄送人, 上传附件)',
           value: 'frontend',
         },
-        {
-          label: '后端发起 (自行编写后端逻辑, 由后端发起流程)',
-          value: 'backend',
-        },
+        { label: '后端发起(自行编写构造发起参数)', value: 'backend' },
       ],
-      getPopupContainer,
     },
     defaultValue: 'frontend',
+    dependencies: {
+      componentProps: (model) => {
+        return {
+          disabled: model.id,
+        };
+      },
+      triggerFields: ['id'],
+    },
   },
   {
     label: '请假类型',
@@ -150,6 +154,7 @@ export const formSchema: () => VbenFormSchema[] = () => [
       getPopupContainer,
     },
     rules: 'selectRequired',
+    formItemClass: 'col-span-1',
   },
   {
     label: '开始时间',
@@ -171,6 +176,7 @@ export const formSchema: () => VbenFormSchema[] = () => [
       };
     },
     rules: 'required',
+    formItemClass: 'col-span-1',
   },
   {
     label: '请假天数',
@@ -179,11 +185,12 @@ export const formSchema: () => VbenFormSchema[] = () => [
     componentProps: {
       disabled: true,
     },
-    // rules: 'required',
+    rules: 'required',
   },
   {
     label: '请假原因',
     fieldName: 'remark',
     component: 'Textarea',
+    formItemClass: 'items-start',
   },
 ];

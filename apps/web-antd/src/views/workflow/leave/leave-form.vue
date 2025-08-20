@@ -1,7 +1,3 @@
-<!--
-这个文件用不上  已经更改交互为drawer
--->
-
 <script setup lang="ts">
 import type { StartWorkFlowReqData } from '#/api/workflow/task/model';
 
@@ -25,7 +21,7 @@ import {
   leaveUpdate,
   submitAndStartWorkflow,
 } from './api';
-import { formSchema } from './data';
+import { modalSchema } from './data';
 
 const route = useRoute();
 const id = route.query?.id as string;
@@ -41,7 +37,7 @@ const [BasicForm, formApi] = useVbenForm({
       class: 'w-full',
     },
   },
-  schema: formSchema(),
+  schema: modalSchema(),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2',
 });
@@ -188,7 +184,6 @@ async function handleCompleteOrCancel() {
         <a-button type="primary" @click="handleStartWorkFlow">提交</a-button>
       </div>
       <ApplyModal
-        :modal-api="applyModalApi"
         @complete="handleCompleteOrCancel"
         @cancel="handleCompleteOrCancel"
       />

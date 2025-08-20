@@ -5,7 +5,9 @@ import type { LeaveForm } from './api/model';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
+import { useRouter } from 'vue-router';
+
+import { Page, useVbenModal } from '@vben/common-ui';
 import { getVxePopupContainer } from '@vben/utils';
 
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
@@ -14,10 +16,9 @@ import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import { cancelProcessApply } from '#/api/workflow/instance';
 import { commonDownloadExcel } from '#/utils/file/download';
 
-import { applyModal, flowInfoModal } from '../components';
+import { flowInfoModal } from '../components';
 import { leaveExport, leaveList, leaveRemove } from './api';
 import { columns, querySchema } from './data';
-import leaveDrawer from './leave-drawer.vue';
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -83,24 +84,13 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   },
 });
 
-const [ApplyModal, applyModalApi] = useVbenModal({
-  connectedComponent: applyModal,
-});
-const [LeaveDrawer, leaveDrawerApi] = useVbenDrawer({
-  connectedComponent: leaveDrawer,
-});
-
+const router = useRouter();
 function handleAdd() {
-  leaveDrawerApi.setData({ applyModalApi }).open();
+  router.push('/workflow/leaveEdit/index');
 }
 
 async function handleEdit(row: Required<LeaveForm>) {
-  leaveDrawerApi.setData({ id: row.id, applyModalApi }).open();
-}
-
-async function handleCompleteOrCancel() {
-  leaveDrawerApi.close();
-  tableApi.query();
+  router.push({ path: '/workflow/leaveEdit/index', query: { id: row.id } });
 }
 
 async function handleDelete(row: Required<LeaveForm>) {
@@ -143,7 +133,6 @@ function handleDownloadExcel() {
 const [FlowInfoModal, flowInfoModalApi] = useVbenModal({
   connectedComponent: flowInfoModal,
 });
-
 function handleInfo(row: Required<LeaveForm>) {
   flowInfoModalApi.setData({ businessId: row.id });
   flowInfoModalApi.open();
@@ -229,10 +218,5 @@ function handleInfo(row: Required<LeaveForm>) {
       </template>
     </BasicTable>
     <FlowInfoModal />
-    <ApplyModal
-      @complete="handleCompleteOrCancel"
-      @cancel="handleCompleteOrCancel"
-    />
-    <LeaveDrawer @reload="() => tableApi.query()" />
   </Page>
 </template>
