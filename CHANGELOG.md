@@ -12,6 +12,7 @@
 - Tinymce 保存图片id 提供`contentWithOssIdTransform`来显示私有桶图片
 - Vxe/Antd可编辑表格适配器(样式等) 解决浮层元素点击与失焦冲突导致无法选中的问题
 - 工作流 后端发起流程demo
+- API加密 前端已经实现RSA/SM2 AES/SM4
 
 **REFACTOR**
 
@@ -22,6 +23,7 @@
 - oss下载 重构为浏览器原生下载(非阻塞)
 - 流程相关样式更新
 - 请假申请 表单更改为drawer方式 替换新页面打开
+- API加密 迁移到@vben/utils下
 
 **OTHERS**
 

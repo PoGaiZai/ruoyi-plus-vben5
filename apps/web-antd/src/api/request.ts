@@ -3,6 +3,10 @@
  */
 
 import type { HttpResponse } from '@vben/request';
+import type {
+  BaseAsymmetricEncryption,
+  BaseSymmetricEncryption,
+} from '@vben/utils';
 
 import { BUSINESS_SUCCESS_CODE, UNAUTHORIZED_CODE } from '@vben/constants';
 import { useAppConfig } from '@vben/hooks';
@@ -15,26 +19,44 @@ import {
   stringify,
 } from '@vben/request';
 import { useAccessStore } from '@vben/stores';
+import {
+  AesEncryption,
+  decodeBase64,
+  encodeBase64,
+  randomStr,
+  RsaEncryption,
+} from '@vben/utils';
 
 import { message, Modal } from 'ant-design-vue';
 import { isEmpty, isNull } from 'lodash-es';
 
 import { useAuthStore } from '#/store';
-import {
-  decryptBase64,
-  decryptWithAes,
-  encryptBase64,
-  encryptWithAes,
-  generateAesKey,
-} from '#/utils/encryption/crypto';
-import * as encryptUtil from '#/utils/encryption/jsencrypt';
 
 import { handleUnauthorizedLogout } from './helper';
 
-const { apiURL, clientId, enableEncrypt } = useAppConfig(
-  import.meta.env,
-  import.meta.env.PROD,
-);
+const { apiURL, clientId, enableEncrypt, rsaPublicKey, rsaPrivateKey } =
+  useAppConfig(import.meta.env, import.meta.env.PROD);
+
+/**
+ * 使用非对称加密的实现 前端已经实现RSA/SM2
+ *
+ * 你可以使用Sm2Encryption来替换 后端也需要同步替换公私钥对
+ *
+ * 后端文件位置: ruoyi-common/ruoyi-common-encrypt/src/main/java/org/dromara/common/encrypt/filter/DecryptRequestBodyWrapper.java
+ *
+ * 注意前端sm-crypto库只能支持04开头的公钥! 否则加密会有问题 你可以使用前端的import { logSm2KeyPair } from '@vben/utils';方法来生成
+ * 如果你生成的公钥开头不是04 那么不能正常加密
+ * 或者使用这个网站来生成: https://tool.hiofd.com/sm2-key-gen/
+ */
+const asymmetricEncryption: BaseAsymmetricEncryption = new RsaEncryption({
+  publicKey: rsaPublicKey,
+  privateKey: rsaPrivateKey,
+});
+
+/**
+ * 对称加密的实现 AES/SM4
+ */
+const symmetricEncryption: BaseSymmetricEncryption = new AesEncryption();
 
 function createRequestClient(baseURL: string) {
   const client = new RequestClient({
@@ -120,15 +142,21 @@ function createRequestClient(baseURL: string) {
         encrypt &&
         ['POST', 'PUT'].includes(config.method?.toUpperCase() || '')
       ) {
-        const aesKey = generateAesKey();
-        config.headers['encrypt-key'] = encryptUtil.encrypt(
-          encryptBase64(aesKey),
-        );
+        // sm4这里改为randomStr(16)
+        const key = randomStr(32);
+        const keyWithBase64 = encodeBase64(key);
+        config.headers['encrypt-key'] =
+          asymmetricEncryption.encrypt(keyWithBase64);
+        /**
+         * axios会默认给字符串前后加上引号 RSA可以正常解密(加不加都能解密) 但是SM2不行(大坑!!!)
+         * 这里通过transformRequest强制返回原始内容
+         */
+        config.transformRequest = (data) => data;
 
         config.data =
           typeof config.data === 'object'
-            ? encryptWithAes(JSON.stringify(config.data), aesKey)
-            : encryptWithAes(config.data, aesKey);
+            ? symmetricEncryption.encrypt(JSON.stringify(config.data), key)
+            : symmetricEncryption.encrypt(config.data, key);
       }
       return config;
     },
@@ -145,13 +173,13 @@ function createRequestClient(baseURL: string) {
       const encryptKey = (response.headers ?? {})['encrypt-key'];
       if (encryptKey) {
         /** RSA私钥解密 拿到解密秘钥的base64 */
-        const base64Str = encryptUtil.decrypt(encryptKey);
+        const base64Str = asymmetricEncryption.decrypt(encryptKey);
         /** base64 解码 得到请求头的 AES 秘钥 */
-        const aesSecret = decryptBase64(base64Str.toString());
+        const secret = decodeBase64(base64Str);
         /** 使用aesKey解密 responseData */
-        const decryptData = decryptWithAes(
+        const decryptData = symmetricEncryption.decrypt(
           response.data as unknown as string,
-          aesSecret,
+          secret,
         );
         /** 赋值 需要转为对象 */
         response.data = JSON.parse(decryptData);
