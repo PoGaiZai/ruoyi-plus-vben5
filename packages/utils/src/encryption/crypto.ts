@@ -26,5 +26,5 @@ export function encodeBase64(str: string) {
  * 解码base64
  */
 export function decodeBase64(str: string) {
-  return CryptoJS.enc.Base64.parse(str).toString();
+  return CryptoJS.enc.Base64.parse(str).toString(CryptoJS.enc.Utf8);
 }
