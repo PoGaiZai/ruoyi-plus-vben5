@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h, ref } from 'vue';
+import { computed, h, ref } from 'vue';
 
 import { CodeMirror, Page } from '@vben/common-ui';
 import { DictEnum } from '@vben/constants';
@@ -31,6 +31,27 @@ onMounted(async () => {
   const resp = await dictDataInfo(DictEnum.SYS_COMMON_STATUS);
   options.push(...resp);
 })
+`;
+
+const computedOptions = computed(() => {
+  return options.filter((item) => item.dictValue !== '1');
+});
+
+const filterCode = `
+{
+  component: 'Select',
+  componentProps: {
+    // 不生效的写法
+    // options: getDictOptions(DictEnum.SYS_COMMON_STATUS).filter((item) => item.value !== '0'),
+    // 正确写法
+    options: computed(() => {
+      const options = getDictOptions(DictEnum.SYS_COMMON_STATUS);
+      return options.filter((item) => item.value !== '0');
+    }),
+  },
+  fieldName: 'status',
+  label: '状态',
+},
 `;
 </script>
 
@@ -112,6 +133,23 @@ onMounted(async () => {
           </DictTag>
         </DescriptionsItem>
       </Descriptions>
+    </Card>
+
+    <Card size="small" title="给 Form 组件赋值前 需要处理字典后展示的情况">
+      <p class="mb-2 text-black/55">
+        <Select class="w-[200px]" :options="computedOptions" />
+
+        这里使用computed过滤了部分选项
+        <a
+          class="text-primary font-semibold"
+          target="_blank"
+          href="https://dapdap.top/function/dict.html#%E7%BB%99-form-%E7%BB%84%E4%BB%B6%E8%B5%8B%E5%80%BC%E5%89%8D-%E9%9C%80%E8%A6%81%E5%81%9A%E5%A4%84%E7%90%86%E5%AD%97%E5%85%B8%E5%90%8E%E5%B1%95%E7%A4%BA%E7%9A%84%E6%83%85%E5%86%B5"
+        >
+          相关文档
+        </a>
+      </p>
+      <p class="mb-2 text-red-500">简单描述就是套一层computed就行</p>
+      <CodeMirror readonly :model-value="filterCode" language="js" />
     </Card>
   </Page>
 </template>
