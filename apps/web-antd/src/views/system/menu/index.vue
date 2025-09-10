@@ -200,7 +200,6 @@ const isAdmin = computed(() => {
       id="system-menu-table"
       table-title="菜单列表"
       table-title-help="双击展开/收起子菜单"
-      :style="{ '--vxe-ui-table-row-current-background-color': '#1677ff' }"
     >
       <template #toolbar-tools>
         <Space>
