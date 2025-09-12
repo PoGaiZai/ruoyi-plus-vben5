@@ -1,3 +1,4 @@
+/** 所有图标都为离线图标 在内网环境也可以正常显示 */
 UPDATE sys_menu SET icon = 'eos-icons:system-group' WHERE menu_id = 1;
 UPDATE sys_menu SET icon = 'solar:monitor-camera-outline' WHERE menu_id = 2;
 UPDATE sys_menu SET icon = 'ant-design:tool-outlined' WHERE menu_id = 3;
