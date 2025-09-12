@@ -10,7 +10,7 @@ import {
   listToTree,
 } from '@vben/utils';
 
-import { Input } from 'ant-design-vue';
+import { Input, Skeleton } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { menuAdd, menuInfo, menuList, menuUpdate } from '#/api/system/menu';
@@ -29,6 +29,7 @@ const isUpdate = ref(false);
 const title = computed(() => {
   return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
 });
+const loading = ref(false);
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
@@ -107,22 +108,26 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       return null;
     }
     drawerApi.drawerLoading(true);
+    loading.value = true;
 
     const { id, update } = drawerApi.getData() as ModalProps;
     isUpdate.value = update;
 
-    // 加载菜单树选择
-    await setupMenuSelect();
     if (id) {
       await formApi.setFieldValue('parentId', id);
       if (update) {
-        const record = await menuInfo(id);
+        // 没有依赖关系 同时加载
+        const [record] = await Promise.all([menuInfo(id), setupMenuSelect()]);
         await formApi.setValues(record);
       }
+    } else {
+      // 加载菜单树选择
+      await setupMenuSelect();
     }
     await markInitialized();
 
     drawerApi.drawerLoading(false);
+    loading.value = false;
   },
 });
 
@@ -153,7 +158,8 @@ async function handleClosed() {
 
 <template>
   <BasicDrawer :title="title" class="w-[600px]">
-    <BasicForm>
+    <Skeleton active v-if="loading" />
+    <BasicForm v-show="!loading">
       <template #remark="slotProps">
         <div class="flex flex-col gap-2">
           <Input v-bind="slotProps" />
