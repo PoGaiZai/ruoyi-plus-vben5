@@ -39,6 +39,8 @@
 
 # 1.4.1
 
+对应后端版本 单体/微服务: 5.4.1/2.4.1
+
 **FEATURES**
 
 - Tinymce添加在antd原生表单/useVbenForm下的校验样式
