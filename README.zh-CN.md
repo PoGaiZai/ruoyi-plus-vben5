@@ -2,6 +2,8 @@
 
 ## 提示
 
+该分支使用[antdv-next](https://github.com/antdv-next/antdv-next)替代已经不维护的antd-design-vue
+
 该仓库使用vben最新版本v5开发
 
 v5版本采用分仓(包)目录结构, 具体开发路径为: `根目录/apps/web-antd`
@@ -16,11 +18,11 @@ V1.2.0版本对接warmflow工作流
 
 基于 [vben5 & antdv-next](https://github.com/vbenjs/vue-vben-admin) 的 RuoYi-Vue-Plus 前端项目
 
-| 组件/框架      | 版本   |
-| :------------- | :----- |
-| vben           | 5.5.9  |
+| 组件/框架  | 版本   |
+| :--------- | :----- |
+| vben       | 5.5.9  |
 | antdv-next | 4.2.6  |
-| vue            | 3.5.13 |
+| vue        | 3.5.13 |
 
 对应后端项目: **(分布式 5.X 分支 微服务 2.分支)**
 
