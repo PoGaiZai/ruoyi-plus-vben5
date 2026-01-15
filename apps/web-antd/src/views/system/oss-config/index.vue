@@ -6,6 +6,7 @@ import type { OssConfig } from '#/api/system/oss-config/model';
 
 import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
+import { EnableStatus } from '@vben/constants';
 
 import { Modal, Popconfirm, Space } from 'antdv-next';
 
@@ -15,7 +16,7 @@ import {
   ossConfigList,
   ossConfigRemove,
 } from '#/api/system/oss-config';
-import { TableSwitch } from '#/components/table';
+import { ApiSwitch } from '#/components/global';
 
 import { columns, querySchema } from './data';
 import ossConfigDrawer from './oss-config-drawer.vue';
@@ -100,6 +101,13 @@ function handleMultiDelete() {
 }
 
 const { hasAccessByCodes } = useAccess();
+async function handleChangeStatus(checked: boolean, row: OssConfig) {
+  await ossConfigChangeStatus({
+    ossConfigId: row.ossConfigId,
+    configKey: row.configKey,
+    status: checked ? EnableStatus.Enable : EnableStatus.Disable,
+  });
+}
 </script>
 
 <template>
@@ -126,9 +134,9 @@ const { hasAccessByCodes } = useAccess();
         </Space>
       </template>
       <template #status="{ row }">
-        <TableSwitch
-          v-model:value="row.status"
-          :api="() => ossConfigChangeStatus(row)"
+        <ApiSwitch
+          :value="row.status === EnableStatus.Enable"
+          :api="(checked) => handleChangeStatus(checked, row)"
           :disabled="!hasAccessByCodes(['system:ossConfig:edit'])"
           checked-text="是"
           un-checked-text="否"

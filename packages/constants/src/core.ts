@@ -59,3 +59,8 @@ export const EnableStatus = {
   Enable: '0',
   Disable: '1',
 };
+
+export const YesNo = {
+  Yes: 'Y',
+  No: 'N',
+};
