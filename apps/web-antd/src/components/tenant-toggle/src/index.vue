@@ -10,7 +10,6 @@ import { useRoute } from 'vue-router';
 import { useAccess } from '@vben/access';
 import { useTabs } from '@vben/hooks';
 import { $t } from '@vben/locales';
-import { getPopupContainer } from '@vben/utils';
 
 import { Select, Spin } from 'antdv-next';
 import { storeToRefs } from 'pinia';
@@ -146,7 +145,6 @@ function filterOption(input: string, option: TenantOption) {
       :filter-option="filterOption"
       :options="tenantList"
       :placeholder="$t('component.tenantToggle.placeholder')"
-      :get-popup-container="getPopupContainer"
       allow-clear
       class="w-60"
       show-search
