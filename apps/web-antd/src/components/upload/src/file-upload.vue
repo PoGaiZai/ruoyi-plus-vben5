@@ -3,7 +3,7 @@
 去除使用`file-type`库进行文件类型检测 在Safari无法使用
 -->
 <script setup lang="ts">
-import type { UploadListType } from 'antdv-next/es/upload/interface';
+import type { UploadProps } from 'antdv-next';
 
 import type { BaseUploadProps, UploadEmits } from './props';
 
@@ -25,7 +25,7 @@ interface FileUploadProps extends BaseUploadProps {
    * 文件上传不适合用picture-card显示
    * @default text
    */
-  listType?: Exclude<UploadListType, 'picture-card'>;
+  listType?: Exclude<UploadProps['listType'], 'picture-card'>;
 }
 
 const props = withDefaults(defineProps<FileUploadProps>(), {
@@ -118,7 +118,7 @@ Upload.Dragger只会影响样式
       >
         <template #size>
           <span
-            class="text-primary mx-1 font-medium"
+            class="mx-1 font-medium text-primary"
             :class="{ 'upload-text__disabled': disabled }"
           >
             {{ maxSize }}MB
@@ -126,7 +126,7 @@ Upload.Dragger只会影响样式
         </template>
         <template #ext>
           <span
-            class="text-primary mx-1 font-medium"
+            class="mx-1 font-medium text-primary"
             :class="{ 'upload-text__disabled': disabled }"
           >
             {{ acceptStr }}

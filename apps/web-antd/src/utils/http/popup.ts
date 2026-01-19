@@ -1,9 +1,9 @@
-import type { AlovaMeta } from '#/../types/alova';
+import type { AxiosRequestConfig } from 'axios';
 
 import { $t } from '#/locales';
 
 interface ShowMessageOptions {
-  meta?: AlovaMeta;
+  meta?: AxiosRequestConfig;
   message: string;
   type: 'error' | 'success';
 }

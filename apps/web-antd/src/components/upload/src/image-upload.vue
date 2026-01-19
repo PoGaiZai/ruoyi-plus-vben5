@@ -3,10 +3,7 @@
 去除使用`file-type`库进行文件类型检测 在Safari无法使用
 -->
 <script setup lang="ts">
-import type {
-  UploadFile,
-  UploadListType,
-} from 'antdv-next/es/upload/interface';
+import type { UploadFile, UploadProps } from 'antdv-next';
 
 import type { BaseUploadProps, UploadEmits } from './props';
 
@@ -26,7 +23,7 @@ interface ImageUploadProps extends BaseUploadProps {
    * 同antdv的listType
    * @default picture-card
    */
-  listType?: UploadListType;
+  listType?: UploadProps['listType'];
   /**
    * 使用list-type: picture-card时 是否显示动画
    * 会有一个`弹跳`的效果 默认关闭
@@ -127,7 +124,7 @@ function currentPreview(file: UploadFile) {
       >
         <template #size>
           <span
-            class="text-primary mx-1 font-medium"
+            class="mx-1 font-medium text-primary"
             :class="{ 'upload-text__disabled': disabled }"
           >
             {{ maxSize }}MB
@@ -135,7 +132,7 @@ function currentPreview(file: UploadFile) {
         </template>
         <template #ext>
           <span
-            class="text-primary mx-1 font-medium"
+            class="mx-1 font-medium text-primary"
             :class="{ 'upload-text__disabled': disabled }"
           >
             {{ acceptStr }}

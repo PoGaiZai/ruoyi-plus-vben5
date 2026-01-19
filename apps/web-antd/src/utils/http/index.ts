@@ -1,12 +1,10 @@
-import type { AxiosError } from 'axios';
+import type { AxiosError, AxiosRequestConfig } from 'axios';
 
 import type { HttpResponse } from '@vben/request';
 import type {
   BaseAsymmetricEncryption,
   BaseSymmetricEncryption,
 } from '@vben/utils';
-
-import type { AlovaMeta } from '#/../types/alova';
 
 import { BUSINESS_SUCCESS_CODE, UNAUTHORIZED_CODE } from '@vben/constants';
 import { useAppConfig } from '@vben/hooks';
@@ -58,7 +56,7 @@ const asymmetricEncryption: BaseAsymmetricEncryption = new RsaEncryption({
  */
 const symmetricEncryption: BaseSymmetricEncryption = new AesEncryption();
 
-const defaultMeta: AlovaMeta = {
+const axiosDefaultConfig: AxiosRequestConfig = {
   successMessageMode: 'none',
   errorMessageMode: 'message',
   withToken: true,
@@ -81,16 +79,19 @@ const alovaInstance = createAlova({
   cacheFor: null,
   shareRequest: false,
   beforeRequest: (request) => {
-    // 合并默认meta
-    const { meta = {}, config } = request;
-    const mergeMeta = merge({}, defaultMeta, meta);
-    request.meta = mergeMeta;
+    const { config } = request;
+    /**
+     * 合并默认axios配置
+     * 在 axiosRequestAdapter 中添加无效 只能在这里手动合并
+     */
+    const mergeMeta = merge({}, axiosDefaultConfig, config);
+    Object.assign(config, mergeMeta);
 
     // 全局开启token功能 && token存在
     const accessStore = useAccessStore();
     const token = accessStore.accessToken;
     // 添加token
-    if (request.meta.withToken && token) {
+    if (config.withToken && token) {
       config.headers.Authorization = token ? `Bearer ${token}` : null;
     }
 
@@ -123,7 +124,7 @@ const alovaInstance = createAlova({
         stringify(params, { arrayFormat: 'repeat' });
     }
 
-    const { encrypt } = request.meta;
+    const { encrypt } = config;
     // 全局开启请求加密功能 && 该请求开启 && 是post/put请求
     if (
       enableEncrypt &&
@@ -175,8 +176,7 @@ const alovaInstance = createAlova({
         response.data = JSON.parse(decryptData);
       }
 
-      const { isReturnNativeResponse, isTransformResponse } =
-        instance.meta as AlovaMeta;
+      const { isReturnNativeResponse, isTransformResponse } = instance.config;
       // 是否返回原生响应 比如：需要获取响应时使用该属性
       if (isReturnNativeResponse) {
         return response;
@@ -243,9 +243,11 @@ const alovaInstance = createAlova({
           successMsg = $t(`http.operationSuccess`);
         }
 
-        if (!['none', undefined].includes(instance.meta?.successMessageMode)) {
+        if (
+          !['none', undefined].includes(instance.config?.successMessageMode)
+        ) {
           showAntdMessage({
-            meta: instance.meta,
+            meta: instance.config,
             message: successMsg,
             type: 'success',
           });
@@ -277,9 +279,9 @@ const alovaInstance = createAlova({
 
       // errorMessageMode='modal'的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
       // errorMessageMode='none' 一般是调用时明确表示不希望自动弹出错误提示
-      if (!['none', undefined].includes(instance.meta?.errorMessageMode)) {
+      if (!['none', undefined].includes(instance.config?.errorMessageMode)) {
         showAntdMessage({
-          meta: instance.meta,
+          meta: instance.config,
           message: timeoutMsg,
           type: 'error',
         });
@@ -304,9 +306,9 @@ const alovaInstance = createAlova({
         }
 
         if (errMessage) {
-          if (!['none', undefined].includes(method.meta?.errorMessageMode)) {
+          if (!['none', undefined].includes(method.config?.errorMessageMode)) {
             showAntdMessage({
-              meta: method.meta,
+              meta: method.config,
               message: errMessage,
               type: 'error',
             });
@@ -319,7 +321,7 @@ const alovaInstance = createAlova({
 
       const msg: string = (response?.data as any)?.msg ?? '';
       // 根据httpStatus判断错误 弹窗提示
-      checkStatus(error?.response?.status, msg, method.meta);
+      checkStatus(error?.response?.status, msg, method.config);
 
       return Promise.reject(error);
     },
@@ -349,40 +351,28 @@ alovaInstance.delete = function (url, data, config) {
 alovaInstance.getWithMsg = function (url, options) {
   return this.Get(url, {
     ...options,
-    meta: {
-      ...options?.meta,
-      successMessageMode: 'message',
-    },
+    successMessageMode: 'message',
   });
 };
 
 alovaInstance.postWithMsg = function (url, data, config) {
   return this.Post(url, data, {
     ...config,
-    meta: {
-      ...config?.meta,
-      successMessageMode: 'message',
-    },
+    successMessageMode: 'message',
   });
 };
 
 alovaInstance.putWithMsg = function (url, data, config) {
   return this.Put(url, data, {
     ...config,
-    meta: {
-      ...config?.meta,
-      successMessageMode: 'message',
-    },
+    successMessageMode: 'message',
   });
 };
 
 alovaInstance.deleteWithMsg = function (url, data, config) {
   return this.Delete(url, data, {
     ...config,
-    meta: {
-      ...config?.meta,
-      successMessageMode: 'message',
-    },
+    successMessageMode: 'message',
   });
 };
 

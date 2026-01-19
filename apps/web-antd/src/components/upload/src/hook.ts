@@ -1,10 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import type { UploadChangeParam, UploadFile } from 'antdv-next';
-import type { FileType } from 'antdv-next/es/upload/interface';
-import type {
-  RcFile,
-  UploadRequestOption,
-} from 'antdv-next/es/vc-upload/interface';
+import type { UploadChangeParam, UploadFile, UploadProps } from 'antdv-next';
 
 import type { ModelRef } from 'vue';
 
@@ -15,7 +10,7 @@ import type {
   UploadType,
 } from './props';
 
-import type { AxiosProgressEvent, UploadResult } from '#/api';
+import type { UploadResult } from '#/api';
 import type { OssFile } from '#/api/system/oss/model';
 
 import { computed, onUnmounted, ref, watch } from 'vue';
@@ -266,7 +261,7 @@ export function useUpload(
    * @param file file
    * @returns file | false
    */
-  function beforeUpload(file: FileType) {
+  const beforeUpload: UploadProps['beforeUpload'] = (file) => {
     const isLtMax = file.size / 1024 / 1024 < props.maxSize!;
     if (!isLtMax) {
       window.message.error($t('component.upload.maxSize', [props.maxSize]));
@@ -274,40 +269,39 @@ export function useUpload(
     }
     // 大坑 Safari不支持file-type库 去除文件类型的校验
     return file;
-  }
+  };
 
   const uploadAbort = new AbortController();
   /**
    * 自定义上传实现
    * @param info
    */
-  async function customRequest(info: UploadRequestOption<any>) {
+  const customRequest: UploadProps['customRequest'] = async (info) => {
     const { api } = props;
     if (!isFunction(api)) {
       console.warn('upload api must exist and be a function');
       return;
     }
     try {
-      // 进度条事件
-      const progressEvent: AxiosProgressEvent = (e) => {
-        const percent = Math.trunc((e.loaded / e.total!) * 100);
-        info.onProgress!({ percent });
-      };
-      const res = await api(info.file as File, {
-        onUploadProgress: progressEvent,
-        signal: uploadAbort.signal,
+      const apiInstance = api(info.file as File, {
         otherData: props?.data,
       });
+      // 进度条事件
+      apiInstance.onUpload((e) => {
+        const percent = Math.trunc((e.loaded / e.total!) * 100);
+        info.onProgress!({ percent });
+      });
+      const res = await apiInstance;
       info.onSuccess!(res);
       if (props.showSuccessMsg) {
         window.message.success($t('component.upload.uploadSuccess'));
       }
-      emit('success', info.file as RcFile, res);
+      emit('success', info.file, res);
     } catch (error: any) {
       console.error(error);
       info.onError!(error);
     }
-  }
+  };
 
   onUnmounted(() => {
     props.abortOnUnmounted && uploadAbort.abort();

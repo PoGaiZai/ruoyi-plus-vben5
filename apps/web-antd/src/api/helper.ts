@@ -1,8 +1,7 @@
 import { $t } from '@vben/locales';
 
 import { useAuthStore } from '#/store';
-
-import { requestClient } from './request';
+import { alovaInstance } from '#/utils/http';
 
 /**
  * @description:  contentType
@@ -23,8 +22,7 @@ export const ContentTypeEnum = {
  * @returns blob二进制
  */
 export function commonExport(url: string, data: Record<string, any>) {
-  return requestClient.post<Blob>(url, data, {
-    data,
+  return alovaInstance.post<Blob>(url, data, {
     headers: { 'Content-Type': ContentTypeEnum.FORM_URLENCODED },
     isTransformResponse: false,
     responseType: 'blob',

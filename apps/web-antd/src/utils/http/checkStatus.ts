@@ -1,4 +1,4 @@
-import type { AlovaMeta } from '#/../types/alova';
+import type { AxiosRequestConfig } from 'axios';
 
 import { $t } from '@vben/locales';
 
@@ -7,7 +7,7 @@ import { showAntdMessage } from './popup';
 export function checkStatus(
   status: number,
   msg: string,
-  meta: AlovaMeta | undefined,
+  meta: AxiosRequestConfig,
 ): void {
   let errorMessage = msg;
 

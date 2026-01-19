@@ -1,4 +1,4 @@
-import { requestClient } from '#/api/request';
+import { alovaInstance } from '#/utils/http';
 
 export interface Temp {
   name: string;
@@ -6,19 +6,19 @@ export interface Temp {
 }
 
 export function visitList() {
-  return requestClient.get<Temp[]>('/monitor/logininfor/visitsMap');
+  return alovaInstance.get<Temp[]>('/monitor/logininfor/visitsMap');
 }
 
 export function deviceInfoList() {
-  return requestClient.get<Temp[]>('/monitor/logininfor/deviceInfoList');
+  return alovaInstance.get<Temp[]>('/monitor/logininfor/deviceInfoList');
 }
 
 export function browserInfoList() {
-  return requestClient.get<Temp[]>('/monitor/logininfor/browserInfoList');
+  return alovaInstance.get<Temp[]>('/monitor/logininfor/browserInfoList');
 }
 
 export function ispInfoList() {
-  return requestClient.get<Temp[]>('/monitor/logininfor/ispInfoList');
+  return alovaInstance.get<Temp[]>('/monitor/logininfor/ispInfoList');
 }
 
 export interface LoginLineResp {
@@ -28,5 +28,5 @@ export interface LoginLineResp {
 }
 
 export function loginLine() {
-  return requestClient.get<LoginLineResp>('/monitor/logininfor/loginLine');
+  return alovaInstance.get<LoginLineResp>('/monitor/logininfor/loginLine');
 }
