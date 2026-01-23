@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { IconifyIcon } from '@vben/icons';
 import { buildUUID } from '@vben/utils';
 
 import { Input, SpaceCompact } from 'antdv-next';
@@ -35,7 +34,7 @@ defineExpose({ refreshSecret });
     />
     <a-button v-if="!disabled" type="primary" @click="refreshSecret">
       <div class="flex items-center gap-[4px]">
-        <IconifyIcon icon="charm:refresh" />
+        <span class="icon-[charm--refresh]"></span>
         <span>随机生成</span>
       </div>
     </a-button>
