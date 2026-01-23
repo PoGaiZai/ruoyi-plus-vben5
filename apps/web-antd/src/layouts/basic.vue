@@ -5,12 +5,7 @@ import { useRouter } from 'vue-router';
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
 import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { useWatermark } from '@vben/hooks';
-import {
-  BookOpenText,
-  CircleHelp,
-  GiteeIcon,
-  GitHubOutlined,
-} from '@vben/icons';
+import { BookOpenText, CircleHelp, GiteeIcon } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
@@ -21,7 +16,7 @@ import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
-import { UserOutlined } from '@ant-design/icons-vue';
+import { GithubOutlined, UserOutlined } from '@ant-design/icons-vue';
 
 import { TenantToggle } from '#/components/tenant-toggle';
 import { $t } from '#/locales';
@@ -71,7 +66,7 @@ const menus = computed(() => {
           target: '_blank',
         });
       },
-      icon: GitHubOutlined,
+      icon: GithubOutlined,
       text: 'Vben官方地址',
     },
     {

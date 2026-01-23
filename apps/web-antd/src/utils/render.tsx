@@ -6,16 +6,7 @@ import type { DictFallback } from '#/components/dict/src/type';
 import { h } from 'vue';
 
 import { JsonPreview } from '@vben/common-ui';
-import {
-  AndroidIcon,
-  DefaultOsIcon,
-  IconifyIcon,
-  IPhoneIcon,
-  LinuxIcon,
-  OSXIcon,
-  VbenIcon,
-  WindowsIcon,
-} from '@vben/icons';
+import { IconifyIcon, VbenIcon } from '@vben/icons';
 import { cn } from '@vben/utils';
 
 import { Tag } from 'antdv-next';
@@ -177,12 +168,14 @@ export function renderIconSpan(
 }
 
 const osOptions = [
-  { icon: WindowsIcon, value: 'windows' },
-  { icon: LinuxIcon, value: 'linux' },
-  { icon: OSXIcon, value: 'osx' },
-  { icon: AndroidIcon, value: 'android' },
-  { icon: IPhoneIcon, value: 'iphone' },
+  { icon: 'icon-[devicon--windows8]', value: 'windows' },
+  { icon: 'icon-[wpf--macos]', value: 'osx' },
+  { icon: 'icon-[devicon--linux]', value: 'linux' },
+  { icon: 'icon-[flat-color-icons--android-os]', value: 'android' },
+  { icon: 'icon-[majesticons--iphone-x-apps-line]', value: 'ios' },
 ];
+
+const DefaultOsIcon = 'icon-[ic--outline-computer]';
 
 /**
  * 浏览器图标
@@ -206,7 +199,7 @@ const browserOptions = [
 
 const DefaultBrowserIcon = 'icon-[ph--browser-duotone]';
 
-export function renderOsIcon(os: string, center = false) {
+export function renderOsIcon(os: string, className?: string) {
   if (!os) {
     return;
   }
@@ -218,7 +211,7 @@ export function renderOsIcon(os: string, center = false) {
     current = osOptions[0];
   }
   const icon = current ? current.icon : DefaultOsIcon;
-  return renderIconSpan(icon, os, center, '5px');
+  return <span class={cn(icon, className)} />;
 }
 
 export function renderBrowserIcon(browser: string, className?: string) {

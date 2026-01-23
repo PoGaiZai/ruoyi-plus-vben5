@@ -63,7 +63,12 @@ const items = computed<DescriptionsProps['items']>(() => {
     },
     {
       label: '登录设备',
-      content: renderOsIcon(data.os),
+      content: (
+        <div class="flex items-center justify-center gap-[6px]">
+          {renderOsIcon(data.os, 'shrink-0')}
+          {data.os}
+        </div>
+      ),
     },
     {
       label: '浏览器',
