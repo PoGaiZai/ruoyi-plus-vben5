@@ -68,6 +68,7 @@ const {
   closeIconPlacement,
   closeOnClickModal,
   closeOnPressEscape,
+  confirmDisabled,
   confirmLoading,
   confirmText,
   contentClass,
@@ -317,6 +318,7 @@ const getForceMount = computed(() => {
           <component
             :is="components.PrimaryButton || VbenButton"
             v-if="showConfirmButton"
+            :disabled="confirmDisabled"
             :loading="confirmLoading || submitting"
             @click="() => drawerApi?.onConfirm()"
           >

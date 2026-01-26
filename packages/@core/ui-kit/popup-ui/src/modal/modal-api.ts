@@ -131,7 +131,7 @@ export class ModalApi {
    * @param loading 是否loading
    */
   modalLoading(loading: boolean) {
-    this.setState({ confirmLoading: loading, loading });
+    this.setState({ confirmDisabled: loading, loading });
   }
 
   /**

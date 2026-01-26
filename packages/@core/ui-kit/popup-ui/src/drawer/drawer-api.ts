@@ -109,7 +109,7 @@ export class DrawerApi {
    * @param loading 是否loading
    */
   drawerLoading(loading: boolean) {
-    this.setState({ confirmLoading: loading, loading });
+    this.setState({ confirmDisabled: loading, loading });
   }
 
   getData<T extends object = Record<string, any>>() {
