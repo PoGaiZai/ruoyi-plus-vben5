@@ -7,6 +7,7 @@ import { useTimeout } from '@vueuse/core';
 import { useRequest } from 'alova/client';
 import { Descriptions, Skeleton } from 'antdv-next';
 import dayjs from 'dayjs';
+import { motion } from 'motion-v';
 
 import { leaveInfo } from './api';
 import { leaveTypeOptions } from './data';
@@ -73,8 +74,15 @@ useTimeout(300, {
 </script>
 
 <template>
-  <div class="rounded-[6px] border p-2">
-    <Descriptions v-if="data" :column="1" :items="items" size="middle" />
+  <div class="min-h-[150px] rounded-[6px] border p-2">
+    <motion.div
+      v-if="data"
+      :initial="{ opacity: 0 }"
+      :animate="{ opacity: 1 }"
+      :transition="{ duration: 0.3 }"
+    >
+      <Descriptions :column="1" :items="items" size="middle" />
+    </motion.div>
 
     <Skeleton v-else-if="showSkeleton && !data" active />
   </div>
