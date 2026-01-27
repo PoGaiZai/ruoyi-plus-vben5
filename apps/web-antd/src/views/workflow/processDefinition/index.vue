@@ -13,7 +13,7 @@ import { useRouter } from 'vue-router';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import { Popconfirm, RadioGroup, Space, Switch } from 'antdv-next';
+import { Popconfirm, RadioGroup, Space } from 'antdv-next';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
@@ -25,6 +25,7 @@ import {
   workflowDefinitionList,
   workflowDefinitionPublish,
 } from '#/api/workflow/definition';
+import { ApiSwitch } from '#/components/global';
 import { downloadByData } from '#/utils/file/download';
 
 import CategoryTree from './category-tree.vue';
@@ -151,14 +152,19 @@ function handleDesign(row: any, _disabled: boolean) {
   });
 }
 
+// ...跟系统其他定义的变量竟然是反的
+const activeStatus = {
+  Enable: 1,
+  Disable: 0,
+} as const;
 /**
  * 激活/挂起流程
  * @param row row
  */
-async function handleActive(row: any, status: boolean | number | string) {
-  const lastStatus = status === 1 ? 0 : 1;
+async function handleActive(row: any, checked: boolean) {
+  const lastStatus = checked ? activeStatus.Enable : activeStatus.Disable;
   try {
-    await workflowDefinitionActive(row.id, !!status);
+    await workflowDefinitionActive(row.id, !!checked);
     await tableApi.query();
   } catch (error) {
     row.activityStatus = lastStatus;
@@ -305,13 +311,20 @@ async function handleReload(type: 'add' | 'update') {
           </Space>
         </template>
         <template #activityStatus="{ row }">
-          <Switch
+          <!-- <Switch
             v-model:checked="row.activityStatus"
             :checked-value="1"
             :unchecked-value="0"
             checked-children="激活"
             un-checked-children="挂起"
             @change="(status) => handleActive(row, status)"
+          /> -->
+          <ApiSwitch
+            :value="row.activityStatus === activeStatus.Enable"
+            checked-children="激活"
+            un-checked-children="挂起"
+            :api="(checked) => handleActive(row, checked)"
+            @reload="() => tableApi.query()"
           />
         </template>
         <template #action="{ row }">
@@ -346,6 +359,8 @@ async function handleReload(type: 'add' | 'update') {
                 <a-button v-if="!row.isPublish" size="small" type="link">
                   发布流程
                 </a-button>
+                <span v-else></span>
+                <!-- 必须要保证在Popconfirm存在元素 所以用v-else来接收 -->
               </Popconfirm>
             </div>
             <div>

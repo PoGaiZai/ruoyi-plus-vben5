@@ -63,9 +63,9 @@ export const DEFAULT_CLIENT_ID = 1;
 export const EnableStatus = {
   Enable: '0',
   Disable: '1',
-};
+} as const;
 
 export const YesNo = {
   Yes: 'Y',
   No: 'N',
-};
+} as const;
