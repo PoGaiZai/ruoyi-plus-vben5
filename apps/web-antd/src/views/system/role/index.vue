@@ -26,7 +26,7 @@ import {
   roleRemove,
 } from '#/api/system/role';
 import { ApiSwitch } from '#/components/global';
-import { commonDownloadExcel } from '#/utils/file/download';
+import { useBlobExport } from '#/utils/file/export';
 
 import { columns, querySchema } from './data';
 import roleAuthModal from './role-auth-modal.vue';
@@ -119,10 +119,14 @@ function handleMultiDelete() {
   });
 }
 
-function handleDownloadExcel() {
-  commonDownloadExcel(roleExport, '角色数据', tableApi.formApi.form.values, {
-    fieldMappingTime: formOptions.fieldMappingTime,
-  });
+const { exportBlob, exportLoading, buildExportFileName } =
+  useBlobExport(roleExport);
+async function handleExport() {
+  // 构建表单请求参数
+  const formValues = await tableApi.formApi.getValues();
+  // 文件名
+  const fileName = buildExportFileName('角色数据');
+  exportBlob({ data: formValues, fileName });
 }
 
 const { hasAccessByCodes, hasAccessByRoles } = useAccess();
@@ -158,7 +162,9 @@ async function handleChangeStatus(checked: boolean, row: Role) {
         <Space>
           <a-button
             v-access:code="['system:role:export']"
-            @click="handleDownloadExcel"
+            :loading="exportLoading"
+            :disabled="exportLoading"
+            @click="handleExport"
           >
             {{ $t('pages.common.export') }}
           </a-button>
