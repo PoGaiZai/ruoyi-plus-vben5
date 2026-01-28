@@ -15,7 +15,7 @@ import {
   configRefreshCache,
   configRemove,
 } from '#/api/system/config';
-import { commonDownloadExcel } from '#/utils/file/download';
+import { useBlobExport } from '#/utils/file/export';
 
 import configModal from './config-modal.vue';
 import { columns, querySchema } from './data';
@@ -104,10 +104,14 @@ function handleMultiDelete() {
   });
 }
 
-function handleDownloadExcel() {
-  commonDownloadExcel(configExport, '参数配置', tableApi.formApi.form.values, {
-    fieldMappingTime: formOptions.fieldMappingTime,
-  });
+const { exportBlob, exportLoading, buildExportFileName } =
+  useBlobExport(configExport);
+async function handleExport() {
+  // 构建表单请求参数
+  const formValues = await tableApi.formApi.getValues();
+  // 文件名
+  const fileName = buildExportFileName('参数配置');
+  exportBlob({ data: formValues, fileName });
 }
 
 async function handleRefreshCache() {
@@ -124,7 +128,9 @@ async function handleRefreshCache() {
           <a-button @click="handleRefreshCache"> 刷新缓存 </a-button>
           <a-button
             v-access:code="['system:config:export']"
-            @click="handleDownloadExcel"
+            :loading="exportLoading"
+            :disabled="exportLoading"
+            @click="handleExport"
           >
             {{ $t('pages.common.export') }}
           </a-button>
