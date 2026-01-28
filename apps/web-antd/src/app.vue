@@ -8,6 +8,7 @@ import { App, ConfigProvider, theme } from 'antdv-next';
 
 import { antdLocale } from '#/locales';
 
+import { waveConfigs } from './components/global/button-wave';
 import { PopupContext } from './utils/context';
 
 defineOptions({ name: 'App' });
@@ -30,10 +31,17 @@ const tokenTheme = computed(() => {
     token: tokens,
   };
 });
+
+// 按钮水波纹样式配置
+const waveConfig = computed(() => {
+  const { buttonWaveMode } = preferences.theme;
+  const found = waveConfigs.find((item) => item.name === buttonWaveMode);
+  return found ? found.wave : {};
+});
 </script>
 
 <template>
-  <ConfigProvider :locale="antdLocale" :theme="tokenTheme">
+  <ConfigProvider :locale="antdLocale" :theme="tokenTheme" :wave="waveConfig">
     <App>
       <RouterView />
       <PopupContext />

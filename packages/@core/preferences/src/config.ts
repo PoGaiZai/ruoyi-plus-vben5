@@ -110,6 +110,7 @@ const defaultPreferences: Preferences = {
   },
   theme: {
     builtinType: 'default',
+    buttonWaveMode: 'Default',
     colorDestructive: 'hsl(348 100% 61%)',
     colorPrimary: 'hsl(215 100% 54%)',
     colorSuccess: 'hsl(144 57% 58%)',
