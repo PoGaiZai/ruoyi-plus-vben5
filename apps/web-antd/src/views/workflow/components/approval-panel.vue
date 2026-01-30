@@ -3,12 +3,14 @@ TODO: 优化项
 会先加载流程信息 再加载业务表单信息
 -->
 <script setup lang="ts">
+import type { TabsProps } from 'antdv-next';
+
 import type { ApprovalType } from './type';
 
 import type { FlowInfoResponse } from '#/api/workflow/instance/model';
 import type { TaskInfo } from '#/api/workflow/task/model';
 
-import { computed, ref, watch } from 'vue';
+import { computed, h, ref, watch } from 'vue';
 
 import { Fallback, VbenAvatar } from '@vben/common-ui';
 import { DictEnum } from '@vben/constants';
@@ -16,7 +18,7 @@ import { cn } from '@vben/utils';
 
 import { CopyOutlined } from '@antdv-next/icons';
 import { useClipboard } from '@vueuse/core';
-import { Card, Divider, TabPane, Tabs } from 'antdv-next';
+import { Card, Divider, Tabs } from 'antdv-next';
 
 import { flowInfo } from '#/api/workflow/instance';
 import { getTaskByTaskId } from '#/api/workflow/task';
@@ -151,13 +153,37 @@ async function handleCopy(text: string) {
   await copy(text);
   window.message.success('复制成功');
 }
+
+const tabItems = computed<TabsProps['items']>(() => {
+  if (!currentFlowInfo.value) {
+    return [];
+  }
+  return [
+    {
+      key: '1',
+      label: '审批详情',
+      content: h(ApprovalDetails, {
+        currentFlowInfo: currentFlowInfo.value,
+        task: props.task!,
+      }),
+    },
+    {
+      forceRender: false,
+      key: '2',
+      label: '审批流程图',
+      content: h(FlowPreview, {
+        instanceId: currentFlowInfo.value.instanceId,
+      }),
+    },
+  ];
+});
 </script>
 
 <template>
   <div :class="cn('thin-scrollbar', 'flex flex-1 overflow-y-hidden')">
     <Card
       v-if="task"
-      :body-style="{ overflowY: 'auto', height: '100%' }"
+      :styles="{ body: { overflowY: 'auto', height: '100%' } }"
       :loading="loading"
       class="thin-scrollbar flex-1 overflow-y-hidden"
       size="small"
@@ -215,18 +241,12 @@ async function handleCopy(text: string) {
           </div>
         </div>
 
-        <Tabs v-if="currentFlowInfo" class="flex-1">
-          <TabPane key="1" tab="审批详情">
-            <ApprovalDetails
-              :current-flow-info="currentFlowInfo"
-              :task="task"
-            />
-          </TabPane>
-
-          <TabPane key="2" tab="审批流程图">
-            <FlowPreview :instance-id="currentFlowInfo.instanceId" />
-          </TabPane>
-        </Tabs>
+        <Tabs
+          v-if="currentFlowInfo"
+          class="flex-1"
+          :items="tabItems"
+          :destroy-on-hidden="true"
+        />
       </div>
 
       <!-- 固定底部 占位高度 -->
