@@ -57,7 +57,7 @@ const items = computed<DescriptionsProps['items']>(() => {
     {
       label: '操作模块',
       content: (
-        <div class="flex items-center">
+        <div class="flex items-center gap-2">
           <Tag>{data.title}</Tag>
           {renderDict(data.businessType, DictEnum.SYS_OPER_TYPE)}
         </div>
@@ -70,10 +70,10 @@ const items = computed<DescriptionsProps['items']>(() => {
     {
       label: '请求信息',
       content: (
-        <>
+        <div class="flex items-center gap-2">
           {renderHttpMethodTag(data.requestMethod)}
           {data.operUrl}
-        </>
+        </div>
       ),
     },
     data.errorMsg
