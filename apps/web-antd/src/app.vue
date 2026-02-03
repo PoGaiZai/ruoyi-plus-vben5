@@ -59,7 +59,7 @@ const otherProps = computed<
     :wave="waveConfig"
     v-bind="otherProps"
   >
-    <App>
+    <App :message="{ maxCount: 1 }">
       <RouterView />
       <PopupContext />
     </App>

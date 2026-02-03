@@ -76,6 +76,10 @@ function handleClick() {
 }
 
 const loading = ref(true);
+
+function keepOneMessage() {
+  window.message.success('只有一条消息');
+}
 </script>
 
 <template>
@@ -84,7 +88,15 @@ const loading = ref(true);
       <template #message>
         该分支使用antdv-next替代不维护的ant-design-vue
         <a-button class="ml-2" size="small" type="primary" @click="handleClick">
-          疯狂点击
+          新的 notification 样式
+        </a-button>
+        <a-button
+          class="ml-2"
+          size="small"
+          type="primary"
+          @click="keepOneMessage"
+        >
+          保持一条消息
         </a-button>
       </template>
     </Alert>
