@@ -23,6 +23,7 @@ overrides:
 catalog:
   '@alova/adapter-axios': ^2.0.17
   '@antdv-next/auto-import-resolver': 1.0.0-rc.1
+  '@antdv-next/happy-work-theme': ^1.0.0
   '@antdv-next/icons': 1.0.0-beta.1
   '@ast-grep/napi': ^0.39.9
   '@changesets/changelog-github': ^0.5.2

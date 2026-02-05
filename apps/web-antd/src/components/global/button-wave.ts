@@ -2,6 +2,10 @@ import type { ConfigProviderProps } from 'antdv-next';
 
 import type { ThemePreferences } from '@vben/preferences';
 
+import { createApp, h } from 'vue';
+
+import { DotEffect } from '@antdv-next/happy-work-theme';
+
 const createHolder = (node: HTMLElement) => {
   const { borderWidth } = getComputedStyle(node);
   const borderWidthNum = Number.parseInt(borderWidth, 10);
@@ -104,30 +108,33 @@ const showShakeEffect: WaveConfig['showEffect'] = (node, { component }) => {
   loop();
 };
 
-const showHappyEffect: WaveConfig['showEffect'] = (
-  node,
-  { event, component },
-) => {
-  if (component !== 'Button') {
-    return;
-  }
+/**
+ * copy from https://github.com/antdv-next/happy-work-theme?tab=readme-ov-file#advanced-usage-with-doteffect
+ */
+const showHappyEffect: WaveConfig['showEffect'] = (target, info) => {
+  const { token, hashId } = info;
 
-  const holder = createHolder(node);
-  const rect = holder.getBoundingClientRect();
-  const left = event.clientX - rect.left;
-  const top = event.clientY - rect.top;
-  const color = `hsl(${Math.floor(Math.random() * 360)}, 80%, 70%)`;
+  const holder = document.createElement('div');
+  holder.style.position = 'absolute';
+  holder.style.left = '0px';
+  holder.style.top = '0px';
+  document.body.append(holder);
 
-  const dot = createDot(holder, color, left, top, 16);
-
-  requestAnimationFrame(() => {
-    dot.addEventListener('transitionend', () => {
-      holder.remove();
-    });
-    dot.style.width = '220px';
-    dot.style.height = '220px';
-    dot.style.opacity = '0';
+  const app = createApp({
+    render() {
+      return h(DotEffect, {
+        target,
+        token,
+        hashId,
+        onFinish: () => {
+          app.unmount();
+          holder.remove();
+        },
+      });
+    },
   });
+
+  app.mount(holder);
 };
 
 export const waveConfigs: Array<{

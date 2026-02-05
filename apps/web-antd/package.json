@@ -29,6 +29,7 @@
   "dependencies": {
     "@alova/adapter-axios": "catalog:",
     "@antdv-next/auto-import-resolver": "catalog:",
+    "@antdv-next/happy-work-theme": "catalog:",
     "@antdv-next/icons": "catalog:",
     "@tinymce/tinymce-vue": "catalog:",
     "@vben/access": "workspace:*",

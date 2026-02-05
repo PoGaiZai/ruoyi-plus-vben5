@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ThemePreferences } from '@vben/preferences';
+
 import { ToggleGroup, ToggleGroupItem } from '@vben-core/shadcn-ui';
 
 defineOptions({
@@ -9,7 +11,11 @@ const modelValue = defineModel<string>('themeButtonWaveMode', {
   default: 'default',
 });
 
-const items = [
+type ButtonWaveModeItem = {
+  label: ThemePreferences['buttonWaveMode'];
+  value: ThemePreferences['buttonWaveMode'];
+};
+const items: ButtonWaveModeItem[] = [
   { label: 'Default', value: 'Default' },
   { label: 'Disabled', value: 'Disabled' },
   { label: 'Happy', value: 'Happy' },
