@@ -147,7 +147,6 @@ const [BaseForm, baseFormApi] = useVbenForm({
       },
       fieldName: 'number',
       label: '数字(带后缀)',
-      suffix: () => '¥',
     },
     {
       component: 'IconPicker',
@@ -280,6 +279,12 @@ const [BaseForm, baseFormApi] = useVbenForm({
       rules: 'selectRequired',
     },
     {
+      component: 'TimeRangePicker',
+      fieldName: 'timeRangePicker',
+      label: '时间范围选择器',
+      rules: 'selectRequired',
+    },
+    {
       component: 'TimePicker',
       fieldName: 'timePicker',
       label: '时间选择框',
@@ -333,7 +338,10 @@ const [BaseForm, baseFormApi] = useVbenForm({
       fieldName: 'treeSelect',
       label: '树选择',
     },
-  ],
+  ].map((i) => ({
+    ...i,
+    rules: 'required',
+  })),
   // 大屏一行显示3个，中屏一行显示2个，小屏一行显示1个
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
 });
