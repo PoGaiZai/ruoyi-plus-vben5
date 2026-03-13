@@ -2,6 +2,7 @@ name: PR Labeler
 
 on:
   pull_request_target:
+    branches: ["dev"]
     types: [opened, synchronize, reopened]
 
 permissions:
