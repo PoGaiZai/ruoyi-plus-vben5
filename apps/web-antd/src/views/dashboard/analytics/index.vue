@@ -84,22 +84,29 @@ function keepOneMessage() {
 
 <template>
   <div class="p-5">
-    <Alert class="mb-5" :show-icon="true" type="success">
-      <template #message>
-        该分支使用antdv-next替代不维护的ant-design-vue
-        <a-button class="ml-2" size="small" type="primary" @click="handleClick">
-          新的 notification 样式
-        </a-button>
-        <a-button
-          class="ml-2"
-          size="small"
-          type="primary"
-          @click="keepOneMessage"
-        >
-          保持一条消息
-        </a-button>
-      </template>
-    </Alert>
+    <div class="mb-5">
+      <Alert :show-icon="true" type="success">
+        <template #message>
+          该分支使用antdv-next替代不维护的ant-design-vue
+          <a-button
+            class="ml-2"
+            size="small"
+            type="primary"
+            @click="handleClick"
+          >
+            新的 notification 样式
+          </a-button>
+          <a-button
+            class="ml-2"
+            size="small"
+            type="primary"
+            @click="keepOneMessage"
+          >
+            保持一条消息
+          </a-button>
+        </template>
+      </Alert>
+    </div>
 
     <Spin :spinning="loading">
       <MarkdownPreviewer
