@@ -214,6 +214,11 @@ async function handleChangeStatus(checked: SwitchProps['checked'], row: User) {
 
 function handleDeptSelect(keys: string[]) {
   selectDeptId.value = keys;
+  tableApi.formApi.submitForm();
+}
+
+function handleDeptReload() {
+  tableApi.formApi.resetForm();
   tableApi.reload();
 }
 </script>
@@ -224,7 +229,7 @@ function handleDeptSelect(keys: string[]) {
       <DeptTree
         v-model:select-dept-id="selectDeptId"
         class="w-[260px]"
-        @reload="() => tableApi.reload()"
+        @reload="handleDeptReload"
         @select="handleDeptSelect"
       />
       <BasicTable class="flex-1 overflow-hidden" table-title="用户列表">
