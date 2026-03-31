@@ -2,13 +2,10 @@
 import type { AnalysisOverviewItem } from '@vben/common-ui';
 import type { TabOption } from '@vben/types';
 
-import { ref } from 'vue';
-
 import {
   AnalysisChartCard,
   AnalysisChartsTabs,
   AnalysisOverview,
-  MarkdownPreviewer,
 } from '@vben/common-ui';
 import {
   SvgBellIcon,
@@ -17,14 +14,11 @@ import {
   SvgDownloadIcon,
 } from '@vben/icons';
 
-import { Alert, Spin } from 'antdv-next';
-
 import AnalyticsTrends from './analytics-trends.vue';
 import AnalyticsVisitsData from './analytics-visits-data.vue';
 import AnalyticsVisitsSales from './analytics-visits-sales.vue';
 import AnalyticsVisitsSource from './analytics-visits-source.vue';
 import AnalyticsVisits from './analytics-visits.vue';
-import md from './change.md?raw';
 
 const overviewItems: AnalysisOverviewItem[] = [
   {
@@ -67,55 +61,10 @@ const chartTabs: TabOption[] = [
     value: 'visits',
   },
 ];
-
-function handleClick() {
-  window.notification.success({
-    title: '新的 notification 样式',
-    description: 'ant design',
-  });
-}
-
-const loading = ref(true);
-
-function keepOneMessage() {
-  window.message.success('只有一条消息');
-}
 </script>
 
 <template>
   <div class="p-5">
-    <div class="mb-5">
-      <Alert :show-icon="true" type="success">
-        <template #message>
-          该分支使用antdv-next替代不维护的ant-design-vue
-          <a-button
-            class="ml-2"
-            size="small"
-            type="primary"
-            @click="handleClick"
-          >
-            新的 notification 样式
-          </a-button>
-          <a-button
-            class="ml-2"
-            size="small"
-            type="primary"
-            @click="keepOneMessage"
-          >
-            保持一条消息
-          </a-button>
-        </template>
-      </Alert>
-    </div>
-
-    <Spin :spinning="loading">
-      <MarkdownPreviewer
-        class="mb-4"
-        v-model:value="md"
-        @mounted="() => (loading = false)"
-      />
-    </Spin>
-
     <AnalysisOverview :items="overviewItems" />
     <AnalysisChartsTabs :tabs="chartTabs" class="mt-5">
       <template #trends>

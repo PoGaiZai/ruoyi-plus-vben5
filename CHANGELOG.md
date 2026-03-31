@@ -1,5 +1,9 @@
 ## 2.0.0
 
+## 环境
+
+最低需要使用`node版本>22.16.0` 否则会影响编辑器的格式化(需要安装oxc插件)
+
 ## 变化(跟ant-design-vue对比)
 
 从ant design (react) v6移植过来 详细也可以看[antd的文档](https://ant.design/changelog-cn#600)
@@ -27,3 +31,10 @@
 - ~~表格上方搜索表单(或者需要调用formReset的场景) -> 时间相关组件必须设置`defaultValue`为`null`(区间时间组件需要设置为[null, null]的元组) **否则不会正常重置**~~ 后续版本已经修复
 - 移除`commonDownloadExcel`方法 使用`useBlobExport`代替
 - 路由模式由`backend`改为`mix`模式 即前后端混合路由 路由放在`apps/web-antd/src/router/routes/modules`下 移除原先的`local.ts`
+
+## vben基础框架的变化
+
+- 使用`oxc`替代`eslint` & `prettier`
+- tailwind3 -> tailwind4
+- vite升级到v8(基于rust)
+- core包`unbuild`升级到`tsdown`(基于rust)
